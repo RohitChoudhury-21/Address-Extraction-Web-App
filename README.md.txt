@@ -62,7 +62,7 @@ project/
 
 ### 1. Clone the repository
 ```bash
-git clone <>
+git clone <https://github.com/RohitChoudhury-21/Address-Extraction-Web-App>
 cd address-extraction-app
 ```
 
@@ -83,9 +83,6 @@ copy .env.example .env          # Windows
 # cp .env.example .env          # Mac/Linux
 ```
 
-Then edit `.env`:
-SMARTY_AUTH_ID = 8b9723f2-05dd-59fe-ad08-a0d4d8fe31f4
-SMARTY_AUTH_TOKEN = 3P3G3qzTdALuiMPrju7n
 
 ### 4. Run the backend
 ```bash
