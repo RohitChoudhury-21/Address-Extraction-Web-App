@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Address Extraction Tool</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Address Extraction Tool</h1>
+      <p class="subtitle">Upload a PDF or TXT file and we'll pull out every US address inside it.</p>
+    </header>
+
+    <!-- Upload Zone -->
+    <section id="upload-section">
+      <div id="drop-zone" class="drop-zone">
+        <input type="file" id="file-input" accept=".pdf,.txt" hidden>
+        <div class="drop-zone-content">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="drop-zone-text">Drag &amp; drop a file here, or <span class="browse-link">browse</span></p>
+          <p class="drop-zone-hint">PDF or TXT — up to 64KB of extracted text</p>
+        </div>
+      </div>
+
+      <div id="file-preview" class="file-preview hidden">
+        <span id="file-name" class="file-name"></span>
+        <button id="remove-file-btn" class="remove-file-btn" type="button" aria-label="Remove file">&times;</button>
+      </div>
+
+      <button id="extract-btn" class="extract-btn" type="button" disabled>Extract Addresses</button>
+    </section>
+
+    <!-- Loading State -->
+    <section id="loading-section" class="hidden">
+      <div class="spinner"></div>
+      <p>Reading your document and finding addresses...</p>
+    </section>
+
+    <!-- Error State -->
+    <section id="error-section" class="hidden">
+      <div class="error-box">
+        <strong id="error-title">Something went wrong</strong>
+        <p id="error-message"></p>
+      </div>
+      <button id="error-upload-btn" class="secondary-btn" type="button">Try again</button>
+    </section>
+
+    <!-- Empty Result State -->
+    <section id="empty-section" class="hidden">
+      <p class="empty-message">No addresses were found in this document.</p>
+      <button id="empty-upload-btn" class="secondary-btn" type="button">Upload another file</button>
+    </section>
+
+    <!-- Results Table -->
+    <section id="results-section" class="hidden">
+      <div class="results-header">
+        <h2>Found <span id="result-count">0</span> address(es)</h2>
+        <button id="new-upload-btn" class="secondary-btn" type="button">Upload another file</button>
+      </div>
+      <div class="table-wrapper">
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Street No.</th>
+              <th>Street</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Zip</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody">
+            <!-- rows injected by script.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
