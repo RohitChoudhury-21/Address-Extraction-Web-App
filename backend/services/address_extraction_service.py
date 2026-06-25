@@ -1,12 +1,11 @@
 from extractors.file_text_extractor import FileTextExtractor
 from clients.smarty_client import SmartyClient
+import hashlib
 import requests
 
 
 class AddressExtractionError(Exception):
-    """
-    Raised for any handled failure in the extraction pipeline, with a user-facing message and code.
-    """
+    """Raised for any handled failure in the extraction pipeline, with a user-facing message and code."""
 
     def __init__(self, message: str, code: str, status_code: int = 400):
         self.message = message
@@ -16,15 +15,14 @@ class AddressExtractionError(Exception):
 
 
 class AddressExtractionService:
-    """
-    Coordinates file text extraction and the Smarty API call, and shapes the result.
-    """
+    """Coordinates file text extraction and the Smarty API call, and shapes the result."""
 
     MAX_TEXT_BYTES = 64 * 1024  # Smarty's actual limit is 64KB, not 1MB
 
     def __init__(self, smarty_client: SmartyClient, file_extractor: FileTextExtractor = None):
         self.smarty_client = smarty_client
         self.file_extractor = file_extractor or FileTextExtractor()
+        self._cache = {}
 
     def process(self, filename: str, file_bytes: bytes) -> list[dict]:
         # Step 1: extract text from the file
@@ -49,7 +47,11 @@ class AddressExtractionService:
         if not text.strip():
             return []  # empty result, not an error — frontend shows "no addresses found"
 
-        # Step 3: call Smarty
+        # Step 3: check cache before calling Smarty
+        text_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if text_hash in self._cache:
+            return self._cache[text_hash]
+
         try:
             smarty_response = self.smarty_client.extract_addresses(text)
         except requests.exceptions.HTTPError as e:
@@ -80,7 +82,9 @@ class AddressExtractionService:
             )
 
         # Step 4: reshape Smarty's response into a flat structure for the frontend
-        return self._format_addresses(smarty_response)
+        formatted = self._format_addresses(smarty_response)
+        self._cache[text_hash] = formatted
+        return formatted
 
     def _format_addresses(self, smarty_response: dict) -> list[dict]:
         addresses = smarty_response.get("addresses", [])

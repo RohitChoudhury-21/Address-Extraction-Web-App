@@ -31,9 +31,17 @@ smarty_client = SmartyClient(auth_id=SMARTY_AUTH_ID, auth_token=SMARTY_AUTH_TOKE
 extraction_service = AddressExtractionService(smarty_client=smarty_client)
 
 
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5MB cap on the raw uploaded file
+
 @app.post("/extract")
 async def extract_addresses(file: UploadFile = File(...)):
     file_bytes = await file.read()
+
+    if len(file_bytes) > MAX_UPLOAD_BYTES:
+        return JSONResponse(
+            status_code=400,
+            content={"error": {"message": "This file is too large. Please upload a file under 5MB.", "code": "UPLOAD_TOO_LARGE"}},
+        )
 
     try:
         addresses = extraction_service.process(filename=file.filename, file_bytes=file_bytes)

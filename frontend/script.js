@@ -40,6 +40,8 @@ function resetToUpload() {
 }
 
 // ---------- File Selection ----------
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB, matches backend cap
+
 function handleFileSelected(file) {
   if (!file) return;
 
@@ -49,6 +51,11 @@ function handleFileSelected(file) {
 
   if (!isValid) {
     showError("Unsupported file type", "Only PDF and TXT files are supported. Please choose a different file.");
+    return;
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    showError("File too large", "Please upload a file under 5MB.");
     return;
   }
 

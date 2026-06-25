@@ -11,14 +11,13 @@ class SmartyClient:
         """
         Sends plain text to Smarty's US Extract API and returns the parsed JSON response.
         Raise requests.
-        Error if Smarty returns a 2xx Status Code
         """
         params = {
             "auth-id": self.auth_id,
             "auth-token": self.auth_token,
         }
         headers = {
-            "Content-Type":"text/plain; charset = utf-8",
+            "Content-Type":"text/plain; charset=utf-8",
         }
 
         response = requests.post(
@@ -30,3 +29,4 @@ class SmartyClient:
         )
         response.raise_for_status()
         return response.json()
+    
